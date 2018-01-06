@@ -21,7 +21,7 @@ namespace HexagonyColorer
 
         [ClassifyIgnore]
         private Grid _grid;
-        public Grid Grid { get { return _grid ?? (_grid = Grid.Parse(HexagonySource)); } }
+        public Grid Grid { get { return _grid ?? (_grid = Grid.Parse(HexagonySource)); } set { _grid = value; } }
 
         public int GetX(PointAxial p) { return (2 * (p.Q + Grid.Size - 1) + p.R) * XTextSpacing + XPadding; }
         public int GetY(PointAxial p) { return (p.R + Grid.Size - 1) * YTextSpacing + YPadding; }
