@@ -675,9 +675,9 @@ namespace HexagonyColorer {
 		// prevent the split pane being dragged with arrow keys
 		
 		const String validCharacters = @"
-		ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
-		.@ 0123456789 )(+-*:%~ ,?;! $_\/\<>[]#
-		{}""'=^&";
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+.@ 0123456789 )(+-*:%~ ,?;! $_|/\<>[]#
+{}""'=^&";
 		
 		private void lstKeyPress(object sender, KeyPressEventArgs e) {
 			char ch = e.KeyChar;
