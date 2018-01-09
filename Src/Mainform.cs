@@ -138,8 +138,9 @@ namespace HexagonyColorer {
 		}
 
 		private void saveCore() {
+			_file.HexagonySource = _file.Grid.ToString();
 			File.WriteAllText(_currentFilePath, ClassifyJson.Serialize(_file).ToStringIndented());
-			File.WriteAllText(sourceFilePath(), _file.Grid.ToString());
+			File.WriteAllText(sourceFilePath(), _file.HexagonySource);
 			
 			_lastFileTime = File.GetLastWriteTimeUtc(_currentFilePath);
 			_anyChanges = false;
