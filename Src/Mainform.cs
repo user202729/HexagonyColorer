@@ -458,7 +458,7 @@ namespace HexagonyColorer {
 			editPath();
 		}
 
-		private static Dictionary<string, Color> PredefinedColors = typeof(Color).GetProperties(BindingFlags.Static | BindingFlags.Public).ToDictionary(f => f.Name, f => (Color)f.GetValue(null));
+		private static Dictionary<string, Color> PredefinedColors = typeof(Color).GetProperties(BindingFlags.Static | BindingFlags.Public).ToDictionary(f => f.Name, f => (Color)f.GetValue(null, null));
 
 		private void editPath() {
 			var path = (HCPath)lstPaths.SelectedItem;
