@@ -124,6 +124,10 @@
     <value>155, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+
+  <!-- This part prevents me from building it on Linux. No idea why.
+  Uncomment this if it works for you.
+
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAQEAAAAAAIAAqAgAAFgAAAIlQTkcNChoKAAAADUlIRFIAAABAAAAAQAgGAAAAqmlx3gAAAfFJ
@@ -136,6 +140,9 @@
         yNmJALckp0KjTIcMWGKexWPQfNABEodNiKs+QWF4+w+3zRlG4jguEa3W2BbVX6ToEAvjFCO4NFb98e3z
         hiZGYdyiBD+NCLAP6RTPDdz5wznGDSDxGNour7pX0NkJ4gyJcd4NEZy7coM5QWLct4PabDR/Zn2RHk/l
         SaCv6Xis5O3w+vWSu+f6BZG6Z2DgVZz0AAAAAElFTkSuQmCC
-</value>
+    </value>
   </data>
+
+  -->
+
 </root>
