@@ -195,6 +195,8 @@ namespace HexagonyColorer {
 			if (result != DialogResult.Cancel && _lastRendering != null)
 				rerender();
 		}
+		
+		private bool cursorVisible = true;
 		private void rerender() {
 			var getX = Ut.Lambda((PointAxial p) => (2 * (p.Q + _file.Grid.Size - 1) + p.R) * _file.XTextSpacing + _file.XPadding);
 			var getY = Ut.Lambda((PointAxial p) => (p.R + _file.Grid.Size - 1) * _file.YTextSpacing + _file.YPadding);
@@ -343,16 +345,18 @@ namespace HexagonyColorer {
 				               ));
  
 				// Draw the selection.
-				float q = (float)_selection.Q, r = (float)_selection.R;
-				g.DrawLines(new Pen(Color.Black), new PointF[] {
-					getPoint(q + .5f, r),
-					getPoint(q, r + .5f),
-					getPoint(q - .5f, r + .5f),
-					getPoint(q - .5f, r),
-					getPoint(q, r - .5f),
-					getPoint(q + .5f, r - .5f),
-					getPoint(q + .5f, r)
-				});
+				if (cursorVisible) {
+					float q = (float)_selection.Q, r = (float)_selection.R;
+					g.DrawLines(new Pen(Color.Black), new PointF[] {
+						getPoint(q + .5f, r),
+						getPoint(q, r + .5f),
+						getPoint(q - .5f, r + .5f),
+						getPoint(q - .5f, r),
+						getPoint(q, r - .5f),
+						getPoint(q + .5f, r - .5f),
+						getPoint(q + .5f, r)
+					});
+				}
 			});
 
 			ctImage.Size = _lastRendering.Size;
@@ -790,6 +794,10 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 						_anyChanges = true;
 					}
 					break;
+				
+				case Keys.Escape:
+					toggleCursor();
+					break;
 					
 				default:
 					return;
@@ -896,10 +904,13 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 		private const String _helpMessage = @"Hexagony Colorer 2
 Use arrow keys to move selection. Moving into corners assumes truthy memory value.
 Hold Left/Right while press Up/Down to move diagonally.
-Shortcuts: Insert (add new path), Home (set home), Delete (delete path).
 You can edit Hexagony source code.
+
+Shortcuts: Insert (add new path), Home (set home), Delete (delete path).
 Ctrl+[ : Decrease hexagon size.
 Ctrl+] : Increase hexagon size.
+Escape : Toggle cursor visibility.
+
 If there are paths with starting point outside of the current hexagon,
 the behavior is undefined.
 
@@ -941,5 +952,12 @@ saved before most functionalities (includes reload from souce) work.
 			}
 		}
 		
+		private void toggleCursor() {
+			cursorVisible = !cursorVisible;
+			rerender();
+		}
+		private void ToggleCursorToolStripMenuItemClick(object sender, EventArgs e) {
+			toggleCursor();
+		}
 	}
 }

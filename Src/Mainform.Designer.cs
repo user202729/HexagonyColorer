@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
         	this.components = new System.ComponentModel.Container();
-        	System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mainform));
         	this.ctSplit = new RT.Util.Controls.SplitContainerEx();
         	this.ctScroll = new System.Windows.Forms.Panel();
         	this.ctImage = new RT.Util.Controls.DoubleBufferedPanel();
@@ -51,8 +50,8 @@
         	this.copyHexagonySourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.tryItOnlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        	this.nothingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        	this.toggleCursorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
         	this.mnuContext = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -243,7 +242,7 @@
         	this.copyHexagonySourceToolStripMenuItem.Name = "copyHexagonySourceToolStripMenuItem";
         	this.copyHexagonySourceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
         	this.copyHexagonySourceToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-        	this.copyHexagonySourceToolStripMenuItem.Text = "Copy Hexagony source";
+        	this.copyHexagonySourceToolStripMenuItem.Text = "&Copy Hexagony source";
         	this.copyHexagonySourceToolStripMenuItem.Click += new System.EventHandler(this.copyHexagonySource);
         	// 
         	// tryItOnlineToolStripMenuItem
@@ -251,30 +250,32 @@
         	this.tryItOnlineToolStripMenuItem.Name = "tryItOnlineToolStripMenuItem";
         	this.tryItOnlineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
         	this.tryItOnlineToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-        	this.tryItOnlineToolStripMenuItem.Text = "Try it online!";
+        	this.tryItOnlineToolStripMenuItem.Text = "&Try it online!";
         	this.tryItOnlineToolStripMenuItem.Click += new System.EventHandler(this.tryItOnline);
         	// 
         	// optionsToolStripMenuItem
         	// 
         	this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.nothingToolStripMenuItem,
-			this.fontToolStripMenuItem});
+			this.fontToolStripMenuItem,
+			this.toggleCursorToolStripMenuItem});
         	this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
         	this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
         	this.optionsToolStripMenuItem.Text = "&Options";
         	// 
-        	// nothingToolStripMenuItem
-        	// 
-        	this.nothingToolStripMenuItem.Name = "nothingToolStripMenuItem";
-        	this.nothingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-        	this.nothingToolStripMenuItem.Text = "Nothing...";
-        	// 
         	// fontToolStripMenuItem
         	// 
         	this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
+        	this.fontToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
         	this.fontToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-        	this.fontToolStripMenuItem.Text = "Font...";
+        	this.fontToolStripMenuItem.Text = "&Font...";
         	this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontSelect);
+        	// 
+        	// toggleCursorToolStripMenuItem
+        	// 
+        	this.toggleCursorToolStripMenuItem.Name = "toggleCursorToolStripMenuItem";
+        	this.toggleCursorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.toggleCursorToolStripMenuItem.Text = "&Toggle cursor";
+        	this.toggleCursorToolStripMenuItem.Click += new System.EventHandler(this.ToggleCursorToolStripMenuItemClick);
         	// 
         	// helpToolStripMenuItem
         	// 
@@ -287,7 +288,7 @@
         	// helpToolStripMenuItem1
         	// 
         	this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
-        	this.helpToolStripMenuItem1.Size = new System.Drawing.Size(99, 22);
+        	this.helpToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
         	this.helpToolStripMenuItem1.Text = "&Help";
         	this.helpToolStripMenuItem1.Click += new System.EventHandler(this.HelpToolStripMenuItem1Click);
         	// 
@@ -320,7 +321,6 @@
         	this.ClientSize = new System.Drawing.Size(634, 263);
         	this.Controls.Add(this.ctSplit);
         	this.Controls.Add(this.ctMainToolStrip);
-        	this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
         	this.Name = "Mainform";
         	this.Text = "Hexagony Colorer";
         	this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.exiting);
@@ -361,12 +361,12 @@
         private System.Windows.Forms.ToolStripMenuItem miExport;
         private System.Windows.Forms.ToolStripMenuItem miRefreshSource;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem nothingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem copyHexagonySourceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tryItOnlineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toggleCursorToolStripMenuItem;
     }
 }
 
