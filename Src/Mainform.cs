@@ -20,15 +20,19 @@ namespace HexagonyColorer {
 		public Mainform(HCSettings settings)
 			: base(settings.FormSettings) {
 			_settings = settings;
+
 			// Default font for use
-			_fontDialog.Font = new Font("Consolas", 15f);
+			_fontDialog.Font = new Font("Consolas", 14f);
+			// in case Consolas is not present,
+			// size should still be 14f
+			_fontDialog.Font = new Font(_fontDialog.Font.Name, 14f);
 			
 			InitializeComponent();
 		}
 
 		private HCSettings _settings;
 		private HCFile _file = new HCFile();
-		private DateTime _lastFileTime;
+		// private DateTime _lastFileTime; // unused
 		private Bitmap _lastRendering;
 		private PointAxial _selection;
 
@@ -93,7 +97,7 @@ namespace HexagonyColorer {
 			_currentFilePath = filePath;
 			_file = ClassifyJson.Deserialize<HCFile>(JsonValue.Parse(File.ReadAllText(_currentFilePath)));
 			_anyChanges = false;
-			_lastFileTime = File.GetLastWriteTimeUtc(_currentFilePath);
+			// _lastFileTime = File.GetLastWriteTimeUtc(_currentFilePath);
 			updateList();
 			rerender();
 		}
@@ -142,7 +146,7 @@ namespace HexagonyColorer {
 			File.WriteAllText(_currentFilePath, ClassifyJson.Serialize(_file).ToStringIndented());
 			File.WriteAllText(sourceFilePath(), _file.HexagonySource);
 			
-			_lastFileTime = File.GetLastWriteTimeUtc(_currentFilePath);
+			// _lastFileTime = File.GetLastWriteTimeUtc(_currentFilePath);
 			_anyChanges = false;
 		}
 
@@ -196,7 +200,7 @@ namespace HexagonyColorer {
 				rerender();
 		}
 		
-		private bool cursorVisible = true;
+		private bool cursorVisible = true, useCap = true;
 		private void rerender() {
 			var getX = Ut.Lambda((PointAxial p) => (2 * (p.Q + _file.Grid.Size - 1) + p.R) * _file.XTextSpacing + _file.XPadding);
 			var getY = Ut.Lambda((PointAxial p) => (p.R + _file.Grid.Size - 1) * _file.YTextSpacing + _file.YPadding);
@@ -213,20 +217,26 @@ namespace HexagonyColorer {
 					Alignment = StringAlignment.Center,
 					LineAlignment = StringAlignment.Center
 				};
-				var startCapPath = new GraphicsPath();
-				startCapPath.AddPolygon(new[] {
-					new PointF(-1, .2f),
-					new PointF(-1, -.5f),
-					new PointF(1, -.5f),
-					new PointF(1, .2f),
-					new PointF(0, -.5f)
-				});
-				var endCapPath = new GraphicsPath();
-				endCapPath.AddPolygon(new[] {
-					new PointF(-1, .5f),
-					new PointF(1, .5f),
-					new PointF(0, 1.2f)
-				});
+
+				GraphicsPath startCapPath = null, endCapPath = null;
+
+				if (useCap) {
+					startCapPath = new GraphicsPath();
+					startCapPath.AddPolygon(new[] {
+						new PointF(-1, .2f),
+						new PointF(-1, -.5f),
+						new PointF(1, -.5f),
+						new PointF(1, .2f),
+						new PointF(0, -.5f)
+					});
+
+					endCapPath = new GraphicsPath();
+					endCapPath.AddPolygon(new[] {
+						new PointF(-1, .5f),
+						new PointF(1, .5f),
+						new PointF(0, 1.2f)
+					});
+				}
 
 				foreach (var path in _file.Paths) {
 					if (path == _blinkingPath)
@@ -252,7 +262,7 @@ namespace HexagonyColorer {
 
 						if (drawArrowStart) {
 							arrowPath.AddLine(new PointF((float)(x + _file.ArrowLength * Math.Cos(getStartAngle(ipDir) * Math.PI / 180)), (float)(y + _file.ArrowLength * Math.Sin(getStartAngle(ipDir) * Math.PI / 180))), p);
-							arrowPen.CustomStartCap = new CustomLineCap(null, startCapPath) { WidthScale = 1f / 3f };
+							if (useCap) arrowPen.CustomStartCap = new CustomLineCap(null, startCapPath) { WidthScale = 1f / 3f };
 						}
 						drawArrowStart = true;
 
@@ -303,7 +313,7 @@ namespace HexagonyColorer {
 
 						if (!finish && (numInstr == null || numInstr.Value > 0) || path.DrawEnd) {
 							arrowPath.AddLine(p, new PointF((float)(x + _file.ArrowLength * Math.Cos(getEndAngle(ipDir) * Math.PI / 180)), (float)(y + _file.ArrowLength * Math.Sin(getEndAngle(ipDir) * Math.PI / 180))));
-							arrowPen.CustomEndCap = new CustomLineCap(null, endCapPath) { WidthScale = .2f };
+							if (useCap) arrowPen.CustomEndCap = new CustomLineCap(null, endCapPath) { WidthScale = .2f };
 						}
 						g.DrawPath(arrowPen, arrowPath);
 
@@ -441,7 +451,6 @@ namespace HexagonyColorer {
 			if (path == null)
 				return;
 			var off = true;
-			var origColor = path.Color;
 			var iter = 7;
 
 			timer.Tick += delegate {
@@ -526,6 +535,7 @@ namespace HexagonyColorer {
 				var chkMaxInstr = addCheckbox("&Limit number of instructions");
 				var txtMaxInstr = (NumericUpDown)addControl("&Max instructions:", new NumericUpDown {
 					Minimum = 1,
+					Maximum = decimal.MaxValue,
 					DecimalPlaces = 0
 				});
 				var ddBranch = (ComboBox)addControl("Take &branches:", new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
@@ -798,7 +808,13 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 				case Keys.Escape:
 					toggleCursor();
 					break;
-					
+
+				// TODO add a menu item with this shortcut
+				case Keys.F12:
+					useCap ^= true;
+					rerender();
+					break;
+
 				default:
 					return;
 			}
@@ -910,6 +926,7 @@ Shortcuts: Insert (add new path), Home (set home), Delete (delete path).
 Ctrl+[ : Decrease hexagon size.
 Ctrl+] : Increase hexagon size.
 Escape : Toggle cursor visibility.
+F12    : Toggle cap visibility.
 
 If there are paths with starting point outside of the current hexagon,
 the behavior is undefined.
