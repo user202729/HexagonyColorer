@@ -36,6 +36,7 @@ namespace HexagonyColorer
         public int XTextSpacing = 15;
         public int YTextSpacing = 27;
         public int ArrowLength = 13;
+        public double ArrowWidth = 17.5;
         public int XPadding = 20;
         public int YPadding = 20;
     }

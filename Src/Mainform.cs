@@ -200,7 +200,7 @@ namespace HexagonyColorer {
 				rerender();
 		}
 		
-		private bool cursorVisible = true, useCap = true;
+		private bool cursorVisible = true;
 		private void rerender() {
 			var getX = Ut.Lambda((PointAxial p) => (2 * (p.Q + _file.Grid.Size - 1) + p.R) * _file.XTextSpacing + _file.XPadding);
 			var getY = Ut.Lambda((PointAxial p) => (p.R + _file.Grid.Size - 1) * _file.YTextSpacing + _file.YPadding);
@@ -217,26 +217,6 @@ namespace HexagonyColorer {
 					Alignment = StringAlignment.Center,
 					LineAlignment = StringAlignment.Center
 				};
-
-				GraphicsPath startCapPath = null, endCapPath = null;
-
-				if (useCap) {
-					startCapPath = new GraphicsPath();
-					startCapPath.AddPolygon(new[] {
-						new PointF(-1, .2f),
-						new PointF(-1, -.5f),
-						new PointF(1, -.5f),
-						new PointF(1, .2f),
-						new PointF(0, -.5f)
-					});
-
-					endCapPath = new GraphicsPath();
-					endCapPath.AddPolygon(new[] {
-						new PointF(-1, .5f),
-						new PointF(1, .5f),
-						new PointF(0, 1.2f)
-					});
-				}
 
 				foreach (var path in _file.Paths) {
 					if (path == _blinkingPath)
@@ -255,14 +235,24 @@ namespace HexagonyColorer {
 
 						var x = getX(ip);
 						var y = getY(ip);
-						var p = new PointF(x, y);
 
-						var arrowPath = new GraphicsPath();
-						var arrowPen = new Pen(new SolidBrush(Color.FromArgb(64, path.Color)), 17.5f) { LineJoin = LineJoin.Bevel };
+						var arrowPath = new List<PointF>();
+						var arrowBrush = new SolidBrush(Color.FromArgb(64, path.Color));
+						float ArrowHwidth = (float)_file.ArrowWidth/2; // half width
+						float ArrowLength = _file.ArrowLength;
 
 						if (drawArrowStart) {
-							arrowPath.AddLine(new PointF((float)(x + _file.ArrowLength * Math.Cos(getStartAngle(ipDir) * Math.PI / 180)), (float)(y + _file.ArrowLength * Math.Sin(getStartAngle(ipDir) * Math.PI / 180))), p);
-							if (useCap) arrowPen.CustomStartCap = new CustomLineCap(null, startCapPath) { WidthScale = 1f / 3f };
+							var boundary = new[] {
+								new PointF(0, ArrowHwidth),
+								new PointF(ArrowLength+ArrowHwidth*0.7f, ArrowHwidth),
+								new PointF(ArrowLength, 0),
+								new PointF(ArrowLength+ArrowHwidth*0.7f, -ArrowHwidth),
+								new PointF(0, -ArrowHwidth),
+							};
+							var transform = new Matrix();
+							transform.Rotate(getStartAngle(ipDir));
+							transform.TransformPoints(boundary);
+							arrowPath.AddRange(boundary);
 						}
 						drawArrowStart = true;
 
@@ -312,10 +302,24 @@ namespace HexagonyColorer {
 						}
 
 						if (!finish && (numInstr == null || numInstr.Value > 0) || path.DrawEnd) {
-							arrowPath.AddLine(p, new PointF((float)(x + _file.ArrowLength * Math.Cos(getEndAngle(ipDir) * Math.PI / 180)), (float)(y + _file.ArrowLength * Math.Sin(getEndAngle(ipDir) * Math.PI / 180))));
-							if (useCap) arrowPen.CustomEndCap = new CustomLineCap(null, endCapPath) { WidthScale = .2f };
+							var boundary = new[] {
+								new PointF(0, ArrowHwidth),
+								new PointF(ArrowLength, ArrowHwidth),
+								new PointF(ArrowLength+ArrowHwidth*0.7f, 0),
+								new PointF(ArrowLength, -ArrowHwidth),
+								new PointF(0, -ArrowHwidth),
+							};
+							var transform = new Matrix();
+							transform.Rotate(getEndAngle(ipDir));
+							transform.TransformPoints(boundary);
+							arrowPath.AddRange(boundary);
 						}
-						g.DrawPath(arrowPen, arrowPath);
+
+						var arrowPathArray = arrowPath.ToArray();
+						var shiftTransform = new Matrix();
+						shiftTransform.Translate(x, y);
+						shiftTransform.TransformPoints(arrowPathArray);
+						g.FillPolygon(arrowBrush, arrowPathArray, FillMode.Winding);
 
 						if (finish)
 							break;
@@ -350,9 +354,9 @@ namespace HexagonyColorer {
 					g.DrawString(instr.Item2.ToString(), font, Brushes.Black, getX(instr.Item1), getY(instr.Item1), sf);
 				
 				var getPoint = Ut.Lambda((float Q, float R) => new PointF(
-					               (2 * (Q + _file.Grid.Size - 1) + R) * _file.XTextSpacing + _file.XPadding,
-					               (R + _file.Grid.Size - 1) * _file.YTextSpacing + _file.YPadding
-				               ));
+								   (2 * (Q + _file.Grid.Size - 1) + R) * _file.XTextSpacing + _file.XPadding,
+								   (R + _file.Grid.Size - 1) * _file.YTextSpacing + _file.YPadding
+							   ));
  
 				// Draw the selection.
 				if (cursorVisible) {
@@ -373,9 +377,9 @@ namespace HexagonyColorer {
 			ctImage.Refresh();
 
 			//File.WriteAllText(imgInf.OutputHtml,
-			//    @"<head><meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8""><body><img src='{0}'><br><ul>{1}</ul>".Fmt(
-			//        imgInf.OutputPng.HtmlEscape(),
-			//        html.JoinString()));
+			//	  @"<head><meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8""><body><img src='{0}'><br><ul>{1}</ul>".Fmt(
+			//		  imgInf.OutputPng.HtmlEscape(),
+			//		  html.JoinString()));
 		}
 
 		private PointAxial? handleEdges(PointAxial ip, Direction dir, bool? isPositive) {
@@ -807,12 +811,6 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 				
 				case Keys.Escape:
 					toggleCursor();
-					break;
-
-				// TODO add a menu item with this shortcut
-				case Keys.F12:
-					useCap ^= true;
-					rerender();
 					break;
 
 				default:
