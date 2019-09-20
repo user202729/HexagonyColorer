@@ -386,12 +386,12 @@ namespace HexagonyColorer {
 			if (_file.Grid.Size == 1)
 				return new PointAxial(0, 0);
 
+            if (ip.InGrid(_file.Grid.Size))
+                return ip;
+
 			var x = ip.Q;
 			var z = ip.R;
 			var y = -x - z;
-
-			if (Ut.Max(Math.Abs(x), Math.Abs(y), Math.Abs(z)) < _file.Grid.Size)
-				return ip;
 
 			var xBigger = Math.Abs(x) >= _file.Grid.Size;
 			var yBigger = Math.Abs(y) >= _file.Grid.Size;
@@ -430,12 +430,15 @@ namespace HexagonyColorer {
 
 		private void mouseDown(object sender, MouseEventArgs e) {
 			if (_lastRendering != null) {
-				_selection = _file.FromScreen(e.X, e.Y);
-				rerender();
-				if (e.Button == MouseButtons.Right)
-					mnuContext.Show(ctImage, e.Location);
-				else
-					DlgMessage.Show("The position you clicked is: " + _selection.ToString(), "Axial coordinates", DlgType.Info);
+				var position = _file.FromScreen(e.X, e.Y);
+                if (position != null) {
+                    _selection = (PointAxial) position;
+                    rerender();
+                    if (e.Button == MouseButtons.Right)
+                        mnuContext.Show(ctImage, e.Location);
+                    else
+                        DlgMessage.Show("The position you clicked is: " + _selection.ToString(), "Axial coordinates", DlgType.Info);
+                }
 			}
 			lstPaths.Focus();
 		}
@@ -798,6 +801,8 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 				case Keys.OemOpenBrackets:
 					if (e.Control && _file.Grid.Size > 1) {
 						_file.Grid = _file.Grid.resize(_file.Grid.Size - 1);
+                        if (!_selection.InGrid(_file.Grid.Size))
+                            _selection = new PointAxial(0, 0);
 						rerender();
 						_anyChanges = true;
 					}

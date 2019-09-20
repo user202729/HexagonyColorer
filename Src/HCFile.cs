@@ -26,11 +26,12 @@ namespace HexagonyColorer
         public int GetX(PointAxial p) { return (2 * (p.Q + Grid.Size - 1) + p.R) * XTextSpacing + XPadding; }
         public int GetY(PointAxial p) { return (p.R + Grid.Size - 1) * YTextSpacing + YPadding; }
 
-        public PointAxial FromScreen(int x, int y)
+        public PointAxial? FromScreen(int x, int y)
         {
             var r = (y - YPadding) / (double) YTextSpacing - (Grid.Size - 1);
             var q = ((x - XPadding) / (double) XTextSpacing - r) / 2 - (Grid.Size - 1);
-            return new PointAxial((int) Math.Round(q), (int) Math.Round(r));
+            var result = new PointAxial((int) Math.Round(q), (int) Math.Round(r));
+            return result.InGrid(Grid.Size) ? result : (PointAxial?) null;
         }
 
         public int XTextSpacing = 15;

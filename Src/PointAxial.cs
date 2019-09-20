@@ -1,4 +1,5 @@
 ﻿using System;
+using RT.Util;
 using RT.Util.ExtensionMethods;
 
 namespace HexagonyColorer
@@ -47,6 +48,15 @@ namespace HexagonyColorer
         public bool Equals(PointAxial other)
         {
             return this == other;
+        }
+
+        public bool InGrid(int gridSize)
+        {
+			var x = Q;
+			var z = R;
+			var y = -x - z;
+
+			return Ut.Max(Math.Abs(x), Math.Abs(y), Math.Abs(z)) < gridSize;
         }
     }
 }
