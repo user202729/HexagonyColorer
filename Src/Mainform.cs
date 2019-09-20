@@ -315,11 +315,13 @@ namespace HexagonyColorer {
 							arrowPath.AddRange(boundary);
 						}
 
-						var arrowPathArray = arrowPath.ToArray();
-						var shiftTransform = new Matrix();
-						shiftTransform.Translate(x, y);
-						shiftTransform.TransformPoints(arrowPathArray);
-						g.FillPolygon(arrowBrush, arrowPathArray, FillMode.Winding);
+                        if (arrowPath.Any()) {
+                            var arrowPathArray = arrowPath.ToArray();
+                            var shiftTransform = new Matrix();
+                            shiftTransform.Translate(x, y);
+                            shiftTransform.TransformPoints(arrowPathArray);
+                            g.FillPolygon(arrowBrush, arrowPathArray, FillMode.Winding);
+                        }
 
 						if (finish)
 							break;
