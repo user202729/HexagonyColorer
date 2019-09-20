@@ -963,8 +963,11 @@ saved before most functionalities (includes reload from souce) work.
 				var stateString = languageId + fieldSeparator + fieldSeparator 
 					+ Regex.Replace(_file.Grid.ToString(), "\r\n", "\n")
 					+ fieldSeparator + fieldSeparator;
-				
-				byte[] bytes = System.Text.Encoding.Default.GetBytes(stateString);
+
+				byte[] bytes = new byte[stateString.Length];
+                for (int i = 0; i < stateString.Length; ++i)
+                    bytes[i] = (byte) stateString[i];
+
 				bytes = Ionic.Zlib.ZlibStream.CompressBuffer(bytes);
 				byte[] truncatedHeader = new byte[bytes.Length - 2];
 				Array.Copy(bytes, 2, truncatedHeader, 0, truncatedHeader.Length);
