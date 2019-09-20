@@ -437,6 +437,7 @@ namespace HexagonyColorer {
 				else
 					DlgMessage.Show("The position you clicked is: " + _selection.ToString(), "Axial coordinates", DlgType.Info);
 			}
+			lstPaths.Focus();
 		}
 
 		private int _pathSelectionCounter = 0;
