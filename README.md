@@ -3,6 +3,18 @@
 * [Official interpreter](https://github.com/mbuettner/hexagony)
 * [Esolangs page](http://esolangs.org/wiki/Hexagony)
 
+---
+
+Improvements over upstream:
+
+* Allow editing the program.
+* Shortcut to run program on "Try it online!".
+* More keyboard shortcut.
+
+See the help menu in the program for more details.
+
+---
+
 This tool allows you take Hexagony programs, for example:
 
             ) { _ 2 " _ { \ "
